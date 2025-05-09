@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Packaged extension files
+*.zip
+*.crx
+
+# OS generated files
+.DS_Store
+Thumbs.db 
