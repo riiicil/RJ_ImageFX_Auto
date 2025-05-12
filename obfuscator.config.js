@@ -4,10 +4,10 @@ module.exports = {
     controlFlowFlatteningThreshold: 0.75,
     deadCodeInjection: true,
     deadCodeInjectionThreshold: 0.4,
-    debugProtection: false, // Bisa diaktifkan jika ingin mempersulit debugging
+    debugProtection: true, // Bisa diaktifkan jika ingin mempersulit debugging
     debugProtectionInterval: 0, // Interval untuk debug protection
     disableConsoleOutput: false, // Bisa diaktifkan untuk menonaktifkan console.log dll.
-    identifierNamesGenerator: 'hexadecimal', // 'mangled' juga bisa jadi pilihan
+    identifierNamesGenerator: 'hexadecimal',  // 'mangled' juga bisa jadi pilihan
     log: false,
     numbersToExpressions: true,
     renameGlobals: false, // Penting untuk ekstensi browser agar tidak merusak interaksi dengan API browser
@@ -18,7 +18,7 @@ module.exports = {
     stringArray: true,
     stringArrayCallsTransform: true,
     stringArrayCallsTransformThreshold: 0.75,
-    stringArrayEncoding: ['base64'], // 'rc4' juga bisa, tapi base64 lebih umum
+    stringArrayEncoding: ['rc4'], // 'rc4' juga bisa, tapi base64 lebih umum
     stringArrayIndexShift: true,
     stringArrayRotate: true,
     stringArrayShuffle: true,

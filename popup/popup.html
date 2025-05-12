@@ -1,30 +1,486 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>ImageFX Control</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RJ ImageFX Auto</title>
+  <!-- Bootstrap CSS Lokal -->
+  <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom Popup CSS (jika diperlukan nanti) -->
+  <!-- <link rel="stylesheet" href="popup.css"> -->
   <style>
-    body {
-      font-family: sans-serif;
-      width: 150px; /* Adjust width as needed */
-      padding: 10px;
+    :root {
+      --primary-color: #5271ff;
+      --primary-hover: #4260e8;
+      --success-color: #36b37e;
+      --success-hover: #2d9669;
+      --danger-color: #ff5c71;
+      --danger-hover: #e84c60;
+      --gradient-start: #f8f9fa;
+      --gradient-end: #ffffff;
     }
-    button {
+    
+    body {
+      width: 340px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      margin: 0;
+      padding: 0;
+      transition: all 0.3s ease;
+      height: auto;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    .container-fluid {
+      padding: 16px;
       width: 100%;
-      margin-bottom: 5px;
-      padding: 8px;
+      overflow-x: hidden;
+    }
+    
+    header {
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    header h5 {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0;
+      position: relative;
+      display: inline-block;
+    }
+    
+    header h5:after {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 3px;
+      background: var(--primary-color);
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 10px;
+    }
+    
+    h6 {
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .list-group-item {
+      background: transparent;
+      border: none;
+      /*border-bottom: 1px solid rgba(0,0,0,0.05);*/
+      padding: 10px 5px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+    }
+    
+    .list-group-item:hover {
+      background-color: rgba(0,0,0,0.01);
+    }
+    
+    .list-group-item:last-child {
+      border-bottom: none;
+    }
+    
+    /* Custom Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      margin-right: 10px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: var(--primary-color);
+    }
+    
+    input:focus + .toggle-slider {
+      box-shadow: 0 0 1px var(--primary-color);
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+    
+    .toggle-label {
+      font-weight: normal;
+      font-size: 0.9rem;
+      color: #444;
       cursor: pointer;
     }
-    #status {
-      margin-top: 10px;
-      font-size: 0.9em;
+    
+    .form-select {
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.1);
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      height: auto;
+    }
+    
+    .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.15rem rgba(82, 113, 255, 0.2);
+    }
+    
+    .input-group {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .input-group-text {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      transition: background-color 0.3s ease;
+    }
+    
+    #filePromptStatus {
+      font-size: 0.85rem;
+      padding: 8px 10px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-left: none;
+      color: #666;
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      background-color: #fff;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    
+    #loadedPromptsCount {
+      font-size: 0.75rem;
+      color: var(--success-color);
+      margin-top: 0.35rem;
+      font-weight: 500;
+    }
+    
+    #mainControlsContainer {
+      margin: 1.25rem 0;
+    }
+    
+    .btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      align-items: center;
+    }
+    
+    .btn {
+      border-radius: 8px;
+      font-weight: 500;
+      padding: 10px 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      border: none;
+      width: 85%;
+      margin: 0 auto;
+      font-size: 0.9rem;
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+    }
+    
+    .btn-success:hover {
+      background-color: var(--success-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+    
+    .btn-danger:hover {
+      background-color: var(--danger-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    #statusMessage {
+      font-size: 0.8rem;
+      padding: 10px;
+      background-color: rgba(0,0,0,0.02);
+      border-radius: 8px;
+      color: #666;
+      transition: all 0.3s ease;
       text-align: center;
+      margin-top: 8px;
+      width: 85%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .status-active {
+      color: var(--success-color) !important;
+      background-color: rgba(54, 179, 126, 0.1) !important;
+    }
+    
+    .status-error {
+      color: var(--danger-color) !important;
+      background-color: rgba(255, 92, 113, 0.1) !important;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .footer {
+      font-size: 0.7rem;
+      color: #888;
+      /*border-top: 1px solid rgba(0,0,0,0.05);*/
+      /*padding-top: 0.75rem;*/
+      /*margin-top: 0.75rem;*/
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+    
+    #customPromptsSection {
+      animation: fadeIn 0.3s ease;
+    }
+    
+    /* Support Overlay/Modal */
+    .support-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .support-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .support-modal {
+      background: linear-gradient(135deg, #ffffff, #f0f4ff);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 320px;
+      padding: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      text-align: center;
+    }
+    
+    .support-overlay.show .support-modal {
+      transform: translateY(0);
+    }
+    
+    .support-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+    
+    .support-text {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    
+    .support-btn {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin: 0 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .support-btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+    }
+    
+    .support-btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .support-btn-skip {
+      background-color: #f2f2f2;
+      color: #777;
+      border: none;
+    }
+    
+    .support-btn-skip:hover {
+      background-color: #e5e5e5;
+    }
+    
+    .support-footer {
+      margin-top: 15px;
+      font-size: 0.7rem;
+      color: #999;
+    }
+    
+    .support-heart {
+      color: var(--danger-color);
+      animation: pulse 1.5s infinite;
     }
   </style>
 </head>
 <body>
-  <button id="startButton">Start Loop</button>
-  <button id="stopButton">Stop Loop</button>
-  <div id="status">Status: Idle</div>
+  <div class="container-fluid">
+    <!-- Header -->
+    <header class="text-center">
+      <h5>RJ ImageFX Auto</h5>
+    </header>
+
+    <!-- Pengaturan -->
+    <h6>Settings</h6>
+    <div id="settingsToggleGroup" class="list-group list-group-flush mb-3">
+      <div class="list-group-item">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggleFloatingControls">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Floating Control</span>
+      </div>
+      <div class="list-group-item">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggleRandomize">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Randomize</span>
+      </div>
+      <div class="list-group-item">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggleUseCustomPrompts">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Use Your Prompt</span>
+      </div>
+    </div>
+
+    <!-- Elemen yang muncul berdasarkan toggleUseCustomPrompts -->
+    <div id="customPromptsSection" class="mb-3 hidden">
+      <select class="form-select mb-2" id="promptListDropdown">
+        <option selected>Aspect Ratio...</option>
+        <option value="Random">Random</option>
+        <option value="1:1">1:1</option>
+        <option value="9:16">9:16</option>
+        <option value="3:4">3:4</option>
+        <option value="16:9">16:9</option>
+        <option value="4:3">4:3</option>
+      </select>
+      
+      <div id="fileStatusContainer" class="input-group mb-1"> 
+        <label class="input-group-text" for="customPromptFile" id="browseButtonLabel" style="cursor: pointer;">Browse</label> 
+        <input type="file" class="form-control hidden" id="customPromptFile" accept=".txt"> 
+        <span id="filePromptStatus">No file chosen</span>
+      </div>
+      <small id="loadedPromptsCount" class="d-block"></small> 
+    </div>
+    
+    <!-- Kontrol Otomasi Utama -->
+    <div id="mainControlsContainer">
+      <div class="btn-container">
+        <button class="btn btn-success" id="startButton" type="button">Start Automation</button>
+        <button class="btn btn-danger" id="stopButton" type="button">Stop Automation</button>
+      </div>
+      <div id="statusMessage" role="status" aria-live="polite"> 
+        Ready to start
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+      <small>© Riiicil 2025 - Ver 2.0.0<br>All rights reserved.</small>
+    </footer>
+  </div>
+  
+  <!-- Support Overlay -->
+  <div class="support-overlay" id="supportOverlay">
+    <div class="support-modal">
+      <div class="support-title">Enjoying RJ ImageFX Auto?</div>
+      <div class="support-text">
+        If you find this extension useful, consider supporting its development. 
+        Every contribution helps keep it improved and updated!
+      </div>
+      <div>
+        <a href="https://saweria.co/riiicil" target="_blank" class="support-btn support-btn-primary">Support Here</a>
+        <button class="support-btn support-btn-skip" id="skipSupportBtn">Skip</button>
+      </div>
+      <div class="support-footer">
+        Made with <span class="support-heart">❤</span> by Riiicil
+      </div>
+    </div>
+  </div>
+
+  <script src="../bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="popup.js"></script>
+  <script src="popup_nagtag.js"></script>
 </body>
-</html>
+</html> 

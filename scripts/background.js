@@ -1,72 +1,61 @@
-// background.js - Service Worker
+console.log("[RJ ImageFX Auto] Background service worker started.");
 
-// Initialize state when the extension is installed or updated
+// Inisialisasi status otomasi di storage saat ekstensi diinstal/update
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.set({ isRunning: false });
-  console.log('Extension installed/updated. State initialized to not running.');
-});
-
-// Function to send status update to popup
-function sendStatusUpdate(isRunning) {
-  chrome.runtime.sendMessage({ action: 'updateStatus', isRunning: isRunning }, (response) => {
-    if (chrome.runtime.lastError) {
-      // Handle error, maybe the popup is not open
-      // console.log("Popup not open or error sending status:", chrome.runtime.lastError.message);
+  chrome.storage.local.get("isAutomating", (data) => {
+    if (typeof data.isAutomating === 'undefined') {
+      chrome.storage.local.set({ isAutomating: false });
+      console.log("[RJ ImageFX Auto] 'isAutomating' initialized to false in storage.");
     }
   });
-}
+});
 
-// Function to send command to content script
-function sendCommandToContentScript(command) {
-  // Removed currentWindow: true to search across all windows
-  chrome.tabs.query({ active: true, url: "*://labs.google/fx/*" }, (tabs) => {
-    if (tabs.length > 0) {
-      // If multiple matching tabs are active in different windows, target the first one found.
-      // This might need refinement if the user has multiple ImageFX tabs active.
-      const tabId = tabs[0].id;
-      // Use message passing instead of executeScript for commands
-      chrome.tabs.sendMessage(tabId, { action: 'controlAutomation', command: command }, (response) => {
+// Fungsi untuk mengirim pesan ke content script di tab aktif
+function sendMessageToActiveTab(message) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (tabs[0] && tabs[0].id) {
+      chrome.tabs.sendMessage(tabs[0].id, message, (response) => {
         if (chrome.runtime.lastError) {
-          console.error(`Error sending ${command} command:`, chrome.runtime.lastError.message);
-           // Stop the process if content script is unreachable
-           chrome.storage.local.set({ isRunning: false });
-           sendStatusUpdate(false);
+          console.warn("[RJ ImageFX Auto] Error sending message to content script:", chrome.runtime.lastError.message);
+          // Ini bisa terjadi jika content script belum siap atau halaman tidak cocok
         } else {
-          console.log(`Sent ${command} command to content script. Response:`, response);
+          console.log("[RJ ImageFX Auto] Message sent to content script, response:", response);
         }
       });
     } else {
-      console.log("No active ImageFX tab found.");
-      // Stop the process if no relevant tab is found
-      chrome.storage.local.set({ isRunning: false });
-      sendStatusUpdate(false);
+      console.warn("[RJ ImageFX Auto] No active tab found to send message.");
     }
   });
 }
 
-// Listen for messages from the popup script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'startAutomation') {
-    console.log('Background: Received startAutomation');
-    chrome.storage.local.set({ isRunning: true }, () => {
-      sendStatusUpdate(true);
-      sendCommandToContentScript('start'); // Tell content script to start the process
-      sendResponse({ status: 'started' });
+// Listener untuk pesan dari popup.js
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("[RJ ImageFX Auto] Background received message: ", request);
+  if (request.action === "start") {
+    chrome.storage.local.set({ isAutomating: true }, () => {
+      console.log("[RJ ImageFX Auto] 'isAutomating' set to true in storage.");
+      sendMessageToActiveTab({ command: "startAutomation" });
+      sendResponse({ status: "Automation start command sent to content script." });
     });
-    return true; // Indicates that the response is sent asynchronously
-  } else if (message.action === 'stopAutomation') {
-    console.log('Background: Received stopAutomation');
-    chrome.storage.local.set({ isRunning: false }, () => {
-      sendStatusUpdate(false);
-      sendCommandToContentScript('stop'); // Tell content script to stop
-      sendResponse({ status: 'stopped' });
+    return true; // Indicates asynchronous response
+  } else if (request.action === "stop") {
+    chrome.storage.local.set({ isAutomating: false }, () => {
+      console.log("[RJ ImageFX Auto] 'isAutomating' set to false in storage (cycleInProgress will be handled by content script).");
+      sendMessageToActiveTab({ command: "stopAutomation" });
+      sendResponse({ status: "Automation stop command sent to content script." });
     });
-    return true; // Indicates that the response is sent asynchronously
+    return true; // Indicates asynchronous response
   }
-  // Handle other potential messages if needed
-});
-
-// No longer need the placeholder function for executeScript
-// function handleCommandFromBackground(command) { ... }
-
-console.log("Background service worker started.");
+  // Pesan untuk mengontrol visibilitas floating controls
+  else if (request.action === "showFloatingControls") {
+    console.log("[RJ ImageFX Auto Background] Received showFloatingControls, forwarding to content script.");
+    sendMessageToActiveTab({ command: "showFloatingControls" });
+    // Tidak perlu response khusus ke popup untuk ini
+  }
+  else if (request.action === "hideFloatingControls") {
+    console.log("[RJ ImageFX Auto Background] Received hideFloatingControls, forwarding to content script.");
+    sendMessageToActiveTab({ command: "hideFloatingControls" });
+    // Tidak perlu response khusus ke popup untuk ini
+  }
+  return false; // No asynchronous response if action is not handled (atau true jika ada async di atasnya yang tidak return)
+}); 

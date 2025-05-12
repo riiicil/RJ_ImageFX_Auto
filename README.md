@@ -11,13 +11,18 @@
 
 ## 1. Deskripsi
 
-Ekstensi Chrome ini dirancang untuk mengotomatiskan proses perulangan (looping) dan pengunduhan gambar dari platform Google ImageFX.
+Ekstensi Chrome ini dirancang untuk mengotomatiskan proses pembuatan dan pengunduhan gambar dari platform Google ImageFX dengan floating controls yang memudahkan penggunaan.
 
 ## 2. Fitur
 
-*   **Otomatisasi Proses Generate:** Secara otomatis mengklik tombol "generate" (atau yang serupa) pada Google ImageFX secara berulang.
-*   **Pengunduhan Otomatis:** Setelah gambar berhasil di-generate, ekstensi akan mencoba mengunduhnya secara otomatis ke folder unduhan default browser Anda.
-*   **Antarmuka Sederhana:** Popup ekstensi yang mudah digunakan untuk memulai dan menghentikan proses otomatisasi.
+*   **Floating Controls:** Kontrol otomatis yang dapat dipindahkan dalam antarmuka ImageFX untuk mengontrol otomatisasi tanpa perlu membuka popup.
+*   **Otomatisasi Proses Generate:** Secara otomatis mengklik tombol "generate" pada Google ImageFX secara berulang.
+*   **Pengunduhan Otomatis:** Setelah gambar berhasil di-generate, ekstensi akan mengunduhnya secara otomatis.
+*   **Dukungan Multi-Bahasa:** Mendukung bahasa Inggris dan Indonesia dengan deteksi otomatis.
+*   **Mode Random Prompt:** Opsi untuk mengacak prompt untuk variasi hasil yang lebih banyak.
+*   **Custom Prompts:** Kemampuan untuk menggunakan daftar prompt kustom Anda sendiri.
+*   **Pengaturan Rasio Aspek:** Kontrol untuk pengaturan rasio aspek gambar.
+*   **Antarmuka Popup yang Diperluas:** Popup ekstensi yang lebih lengkap dengan lebih banyak opsi konfigurasi.
 
 ## 3. Instalasi
 
@@ -32,13 +37,14 @@ Ekstensi Chrome ini dirancang untuk mengotomatiskan proses perulangan (looping) 
 ## 4. Penggunaan
 
 1.  Pastikan Anda sudah berada di halaman Google ImageFX di mana Anda biasanya men-generate gambar.
-2.  Klik ikon ekstensi **RJ ImageFX Auto** yang muncul di toolbar browser Chrome Anda.
+2.  Klik ikon ekstensi **RJ ImageFX Auto** yang muncul di toolbar browser Chrome Anda, atau gunakan floating controls yang muncul pada halaman ImageFX.
 3.  Di dalam popup ekstensi:
-    *   Anda mungkin akan melihat tombol "Start Automation" atau "Mulai".
-    *   Jika ada opsi konfigurasi (seperti jumlah loop atau nama file dasar untuk unduhan), atur sesuai keinginan Anda.
-4.  Klik tombol untuk memulai proses otomatisasi.
-5.  Ekstensi akan mulai bekerja, melakukan proses generate gambar secara berulang dan mengunduhnya.
-6.  Anda bisa mengklik ikon ekstensi lagi untuk menghentikan proses jika diperlukan (tergantung implementasi tombol stop/pause).
+    *   Anda dapat memilih mode otomatisasi (standar, random prompt, atau custom prompts).
+    *   Atur rasio aspek yang diinginkan.
+    *   Konfigurasikan jumlah siklus atau pengaturan lainnya.
+4.  Klik tombol "Start Automation" untuk memulai proses otomatisasi.
+5.  Ekstensi akan mulai bekerja, menghasilkan gambar dan mengunduhnya secara otomatis.
+6.  Anda dapat menghentikan proses kapan saja dengan mengklik tombol "Stop Automation" pada floating controls atau popup.
 
 ## 5. Lisensi
 

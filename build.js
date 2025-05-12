@@ -7,20 +7,24 @@ const outputDir = path.join(__dirname, 'dist');
 const scriptsDir = path.join(__dirname, 'scripts');
 const popupDir = path.join(__dirname, 'popup');
 const iconsDir = path.join(__dirname, 'icons');
+const btDir = path.join(__dirname, 'bootstrap');
 
 const filesToObfuscate = [
     { input: path.join(scriptsDir, 'background.js'), output: path.join(outputDir, 'scripts', 'background.js') },
-    { input: path.join(scriptsDir, 'content_script.js'), output: path.join(outputDir, 'scripts', 'content_script.js') },
-    { input: path.join(popupDir, 'popup.js'), output: path.join(outputDir, 'popup', 'popup.js') }
+    { input: path.join(scriptsDir, 'content.js'), output: path.join(outputDir, 'scripts', 'content.js') },
+    { input: path.join(popupDir, 'popup.js'), output: path.join(outputDir, 'popup', 'popup.js') },
+    { input: path.join(popupDir, 'popup_nagtag.js'), output: path.join(outputDir, 'popup', 'popup_nagtag.js') }
 ];
 
 const filesToCopy = [
     { input: path.join(__dirname, 'manifest.json'), output: path.join(outputDir, 'manifest.json') },
-    { input: path.join(popupDir, 'popup.html'), output: path.join(outputDir, 'popup', 'popup.html') }
+    { input: path.join(popupDir, 'popup.html'), output: path.join(outputDir, 'popup', 'popup.html') },
+    { input: path.join(scriptsDir, 'floating-controls.css'), output: path.join(outputDir, 'scripts', 'floating-controls.css') }
 ];
 
 const directoriesToCopy = [
-    { input: iconsDir, output: path.join(outputDir, 'icons') }
+    { input: iconsDir, output: path.join(outputDir, 'icons') },
+    { input: btDir, output: path.join(outputDir, 'bootstrap') }
 ];
 
 async function build() {

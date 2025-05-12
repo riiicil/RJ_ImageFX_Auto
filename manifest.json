@@ -1,16 +1,13 @@
 {
   "manifest_version": 3,
   "name": "RJ ImageFX Auto",
-  "version": "1.1.0",
-  "description": "Automates Looping and Downloading images from Google ImageFX.",
+  "version": "2.0.0",
+  "description": "Automates image generation and download on ImageFX with floating controls.",
   "permissions": [
-    "storage",
-    "scripting",
     "activeTab",
-    "tabs"
-  ],
-  "host_permissions": [
-    "*://labs.google/fx/*"
+    "scripting",
+    "downloads",
+    "storage"
   ],
   "action": {
     "default_popup": "popup/popup.html",
@@ -20,18 +17,27 @@
       "128": "icons/icon128.png"
     }
   },
-  "background": {
-    "service_worker": "scripts/background.js"
-  },
-  "content_scripts": [
-    {
-      "matches": ["*://labs.google/fx/*"],
-      "js": ["scripts/content_script.js"]
-    }
-  ],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
-}
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://labs.google.com/*", "*://labs.google/*", "*://labs.google/fx/*/tools/image-fx","*://labs.google.com/fx/*", "*://labs.google.com/fx/*/tools/image-fx", "*://labs.google.com/fx/tools/image-fx"],
+      "js": ["scripts/content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["scripts/floating-controls.css"],
+      "matches": ["*://labs.google.com/*", "*://labs.google/*"]
+    }
+  ]
+} 
